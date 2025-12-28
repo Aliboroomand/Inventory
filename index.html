@@ -1,105 +1,96 @@
-<!-- ======= RECEIPT / ISSUE ======= -->
-<div id="documentSection" style="display:none;">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>سیستم انبارداری</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <div class="card shadow-sm mt-4">
-        <div class="card-body">
-            <h5 class="mb-3">ثبت رسید / حواله</h5>
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
 
-            <form id="documentForm">
-                <div class="row g-3">
+    <!-- فونت فارسی -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 
-                    <div class="col-md-2">
-                        <label class="form-label">نوع سند</label>
-                        <select class="form-select" id="docType" required>
-                            <option value="">انتخاب کنید</option>
-                            <option value="رسید">رسید</option>
-                            <option value="حواله">حواله</option>
-                        </select>
-                    </div>
+    <style>
+        body { font-family: Vazirmatn, Tahoma, sans-serif; }
+        .nav-link { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-light">
 
-                    <div class="col-md-2">
-                        <label class="form-label">شماره سند</label>
-                        <input type="number" class="form-control" id="docNumber" readonly>
-                    </div>
+<!-- ======= NAVBAR ======= -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand">سیستم انبارداری</span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                    <div class="col-md-2">
-                        <label class="form-label">ردیف سند</label>
-                        <input type="number" class="form-control" id="docRow" readonly>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">تاریخ سند</label>
-                        <input type="text" class="form-control" id="docDate" placeholder="مثال: 1400/01/01" required>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">طرف حساب</label>
-                        <select class="form-select" id="docPerson" required></select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">گروه کالا</label>
-                        <select class="form-select" id="docCategory" required></select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">کالا</label>
-                        <select class="form-select" id="docProduct" required></select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">واحد</label>
-                        <input type="text" class="form-control" id="docUnit" readonly>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">موجودی</label>
-                        <input type="number" class="form-control" id="docStock" readonly>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">تعداد</label>
-                        <input type="number" class="form-control" id="docQty" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">توضیحات</label>
-                        <input type="text" class="form-control" id="docDesc">
-                    </div>
-
-                </div>
-
-                <button class="btn btn-primary mt-3">ثبت سند</button>
-            </form>
+        <div class="collapse navbar-collapse" id="mainMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" onclick="showSection('dashboard')">داشبورد</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('people')">اشخاص</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('category')">گروه کالا</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('unit')">واحد شمارش</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('product')">کالاها</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('document')">رسید / حواله</a></li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <!-- جدول اسناد -->
-    <div class="card shadow-sm mt-4">
-        <div class="card-body">
-            <h5 class="mb-3">لیست اسناد</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>نوع سند</th>
-                            <th>شماره سند</th>
-                            <th>ردیف</th>
-                            <th>تاریخ</th>
-                            <th>طرف حساب</th>
-                            <th>گروه کالا</th>
-                            <th>کالا</th>
-                            <th>واحد</th>
-                            <th>موجودی</th>
-                            <th>تعداد</th>
-                            <th>توضیحات</th>
-                            <th>عملیات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="documentTable"></tbody>
-                </table>
+<!-- ======= CONTENT ======= -->
+<div class="container mt-4">
+
+    <!-- ======= DASHBOARD ======= -->
+    <div id="dashboardSection">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">خوش آمدید 👋</h4>
+                <p>این سیستم انبارداری برای استفاده شخصی طراحی شده و فعلاً بدون لاگین کار می‌کند.</p>
+                <p class="text-muted mb-0">اطلاعات به‌صورت محلی در مرورگر ذخیره می‌شوند.</p>
             </div>
         </div>
     </div>
 
+    <!-- ======= PEOPLE ======= -->
+    <div id="peopleSection" style="display:none;"></div>
+
+    <!-- ======= CATEGORY ======= -->
+    <div id="categorySection" style="display:none;"></div>
+
+    <!-- ======= UNIT ======= -->
+    <div id="unitSection" style="display:none;"></div>
+
+    <!-- ======= PRODUCT ======= -->
+    <div id="productSection" style="display:none;"></div>
+
+    <!-- ======= DOCUMENT (RECEIPT / ISSUE) ======= -->
+    <div id="documentSection" style="display:none;"></div>
+
 </div>
+
+<!-- ======= SCRIPTS ======= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- فایل‌های جداگانه JS -->
+<script src="js/people.js"></script>
+<script src="js/unit.js"></script>
+<script src="js/category.js"></script>
+<script src="js/product.js"></script>
+<script src="js/document.js"></script>
+
+<script>
+function showSection(section) {
+    const sections = ["dashboard","people","category","unit","product","document"];
+    sections.forEach(sec => document.getElementById(sec + "Section").style.display = "none");
+    document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+
+    document.getElementById(section + "Section").style.display = "block";
+    const menuIndex = sections.indexOf(section);
+    if(menuIndex >= 0) document.querySelectorAll(".nav-link")[menuIndex].classList.add("active");
+}
+</script>
+
+</body>
+</html>
