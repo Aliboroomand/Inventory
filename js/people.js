@@ -68,6 +68,8 @@ form.addEventListener("submit", (e) => {
     companyName.disabled = false;
     typeSelect.value = "";
 
+    setTimeout(() => { firstName.focus(); }, 0);
+    
     renderTable();
 });
 
