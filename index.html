@@ -40,8 +40,9 @@
                     <a class="nav-link" onclick="showSection('people')">اشخاص</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled">گروه کالا</a>
+                    <a class="nav-link" onclick="showSection('category')">گروه کالا</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link disabled">کالاها</a>
                 </li>
@@ -175,4 +176,53 @@ function showSection(section) {
 
 </body>
 </html>
+<!-- ======= CATEGORY ======= -->
+<div id="categorySection" style="display:none;">
+
+    <!-- فرم ثبت گروه کالا -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="mb-3">ثبت گروه کالا</h5>
+
+            <form id="categoryForm">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">نام گروه کالا</label>
+                        <input type="text" class="form-control" id="categoryName">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">توضیحات</label>
+                        <input type="text" class="form-control" id="categoryDesc">
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary mt-3">ثبت گروه</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- جدول گروه‌ها -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="mb-3">لیست گروه کالا</h5>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>نام گروه</th>
+                            <th>توضیحات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
