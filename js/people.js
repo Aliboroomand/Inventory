@@ -1,11 +1,4 @@
-// ===============================
-// Data Load
-// ===============================
-let people = JSON.parse(localStorage.getItem("people")) || [];
-
-// ===============================
-// Elements
-// ===============================
+// عناصر فرم
 const form = document.getElementById("personForm");
 const typeSelect = document.getElementById("personType");
 const firstName = document.getElementById("firstName");
@@ -15,41 +8,37 @@ const phone = document.getElementById("phone");
 const nationalCode = document.getElementById("nationalCode");
 const tableBody = document.getElementById("peopleTable");
 
-// ===============================
-// Field Locking Logic
-// ===============================
+// آرایه موقت برای نمایش جدول
+let people = [];
+
+// ======== فیلدها هوشمند ========
 typeSelect.addEventListener("change", () => {
     if (typeSelect.value === "حقیقی") {
         firstName.disabled = false;
         lastName.disabled = false;
         companyName.disabled = true;
         companyName.value = "";
-    }
-
-    if (typeSelect.value === "حقوقی") {
+    } else if (typeSelect.value === "حقوقی") {
         firstName.disabled = true;
         lastName.disabled = true;
-        companyName.disabled = false;
         firstName.value = "";
         lastName.value = "";
+        companyName.disabled = false;
+    } else {
+        firstName.disabled = false;
+        lastName.disabled = false;
+        companyName.disabled = false;
     }
 });
 
-// ===============================
-// Form Submit
-// ===============================
-form.addEventListener("submit", function (e) {
+// ======== ثبت شخص ========
+form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const type = typeSelect.value.trim();
-
-    if (!type) {
-        alert("نوع شخص را انتخاب کنید");
-        return;
-    }
+    if (!type) { alert("نوع شخص را انتخاب کنید"); return; }
 
     let displayName = "";
-
     if (type === "حقیقی") {
         if (!firstName.value.trim() || !lastName.value.trim()) {
             alert("نام و نام خانوادگی را وارد کنید");
@@ -57,7 +46,6 @@ form.addEventListener("submit", function (e) {
         }
         displayName = firstName.value.trim() + " " + lastName.value.trim();
     }
-
     if (type === "حقوقی") {
         if (!companyName.value.trim()) {
             alert("نام شرکت را وارد کنید");
@@ -66,39 +54,32 @@ form.addEventListener("submit", function (e) {
         displayName = companyName.value.trim();
     }
 
-    const person = {
-        id: Date.now(),               // شناسه یکتا
+    // داده فقط در آرایه موقت
+    people.push({
         type: type,
         name: displayName,
-        phone: phone.value.trim(),
-        code: nationalCode.value.trim()
-    };
-
-    people.push(person);
-    localStorage.setItem("people", JSON.stringify(people));
+        phone: phone.value.trim() || "-",
+        code: nationalCode.value.trim() || "-"
+    });
 
     form.reset();
     firstName.disabled = false;
     lastName.disabled = false;
     companyName.disabled = false;
+    typeSelect.value = "";
 
     renderTable();
 });
 
-// ===============================
-// Render Table
-// ===============================
+// ======== نمایش جدول ========
 function renderTable() {
     tableBody.innerHTML = "";
 
     if (people.length === 0) {
         tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center text-muted">
-                    موردی ثبت نشده است
-                </td>
-            </tr>
-        `;
+        <tr>
+            <td colspan="4" class="text-center text-muted">موردی ثبت نشده است</td>
+        </tr>`;
         return;
     }
 
@@ -107,14 +88,12 @@ function renderTable() {
         tr.innerHTML = `
             <td>${p.type}</td>
             <td>${p.name}</td>
-            <td>${p.phone || "-"}</td>
-            <td>${p.code || "-"}</td>
+            <td>${p.phone}</td>
+            <td>${p.code}</td>
         `;
         tableBody.appendChild(tr);
     });
 }
 
-// ===============================
-// Initial Load
-// ===============================
+// نمایش اولیه
 renderTable();
