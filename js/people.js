@@ -1,83 +1,120 @@
+// ===============================
+// Data Load
+// ===============================
 let people = JSON.parse(localStorage.getItem("people")) || [];
 
-document.getElementById("personForm").addEventListener("submit", function (e) {
+// ===============================
+// Elements
+// ===============================
+const form = document.getElementById("personForm");
+const typeSelect = document.getElementById("personType");
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
+const companyName = document.getElementById("companyName");
+const phone = document.getElementById("phone");
+const nationalCode = document.getElementById("nationalCode");
+const tableBody = document.getElementById("peopleTable");
+
+// ===============================
+// Field Locking Logic
+// ===============================
+typeSelect.addEventListener("change", () => {
+    if (typeSelect.value === "حقیقی") {
+        firstName.disabled = false;
+        lastName.disabled = false;
+        companyName.disabled = true;
+        companyName.value = "";
+    }
+
+    if (typeSelect.value === "حقوقی") {
+        firstName.disabled = true;
+        lastName.disabled = true;
+        companyName.disabled = false;
+        firstName.value = "";
+        lastName.value = "";
+    }
+});
+
+// ===============================
+// Form Submit
+// ===============================
+form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const type = personType.value;
-    const firstName = firstNameInput();
-    const lastName = lastNameInput();
-    const company = companyName.value.trim();
-    const phone = phone.value.trim();
-    const code = nationalCode.value.trim();
+    const type = typeSelect.value.trim();
 
     if (!type) {
         alert("نوع شخص را انتخاب کنید");
         return;
     }
 
-    const displayName =
-        type === "حقیقی"
-            ? `${firstName} ${lastName}`
-            : company;
+    let displayName = "";
 
-    people.push({
-        type,
+    if (type === "حقیقی") {
+        if (!firstName.value.trim() || !lastName.value.trim()) {
+            alert("نام و نام خانوادگی را وارد کنید");
+            return;
+        }
+        displayName = firstName.value.trim() + " " + lastName.value.trim();
+    }
+
+    if (type === "حقوقی") {
+        if (!companyName.value.trim()) {
+            alert("نام شرکت را وارد کنید");
+            return;
+        }
+        displayName = companyName.value.trim();
+    }
+
+    const person = {
+        id: Date.now(),               // شناسه یکتا
+        type: type,
         name: displayName,
-        phone,
-        code
-    });
+        phone: phone.value.trim(),
+        code: nationalCode.value.trim()
+    };
 
+    people.push(person);
     localStorage.setItem("people", JSON.stringify(people));
-    this.reset();
-    renderPeople();
+
+    form.reset();
+    firstName.disabled = false;
+    lastName.disabled = false;
+    companyName.disabled = false;
+
+    renderTable();
 });
 
-function firstNameInput() {
-    return document.getElementById("firstName").value.trim();
-}
+// ===============================
+// Render Table
+// ===============================
+function renderTable() {
+    tableBody.innerHTML = "";
 
-function lastNameInput() {
-    return document.getElementById("lastName").value.trim();
-}
-
-function renderPeople() {
-    const tbody = document.getElementById("peopleTable");
-    tbody.innerHTML = "";
+    if (people.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    موردی ثبت نشده است
+                </td>
+            </tr>
+        `;
+        return;
+    }
 
     people.forEach(p => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${p.type}</td>
             <td>${p.name}</td>
-            <td>${p.phone}</td>
-            <td>${p.code}</td>
+            <td>${p.phone || "-"}</td>
+            <td>${p.code || "-"}</td>
         `;
-        tbody.appendChild(tr);
+        tableBody.appendChild(tr);
     });
 }
-const personTypeSelect = document.getElementById("personType");
 
-const firstNameInput = document.getElementById("firstName");
-const lastNameInput = document.getElementById("lastName");
-const companyInput = document.getElementById("companyName");
-
-personTypeSelect.addEventListener("change", function () {
-    if (this.value === "حقیقی") {
-        firstNameInput.disabled = false;
-        lastNameInput.disabled = false;
-        companyInput.disabled = true;
-        companyInput.value = "";
-    }
-
-    if (this.value === "حقوقی") {
-        firstNameInput.disabled = true;
-        lastNameInput.disabled = true;
-        companyInput.disabled = false;
-        firstNameInput.value = "";
-        lastNameInput.value = "";
-    }
-});
-
-
-renderPeople();
-
+// ===============================
+// Initial Load
+// ===============================
+renderTable();
