@@ -12,12 +12,8 @@
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 
     <style>
-        body {
-            font-family: Vazirmatn, Tahoma, sans-serif;
-        }
-        .nav-link {
-            cursor: pointer;
-        }
+        body { font-family: Vazirmatn, Tahoma, sans-serif; }
+        .nav-link { cursor: pointer; }
     </style>
 </head>
 <body class="bg-light">
@@ -26,67 +22,38 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <span class="navbar-brand">سیستم انبارداری</span>
-
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="mainMenu">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" onclick="showSection('dashboard')">داشبورد</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="showSection('people')">اشخاص</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="showSection('category')">گروه کالا</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link disabled">کالاها</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled">ورود / خروج</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled">گزارش‌ها</a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" onclick="showSection('dashboard')">داشبورد</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('people')">اشخاص</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="showSection('category')">گروه کالا</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<!-- ======= CONTENT ======= -->
 <div class="container mt-4">
 
-    <!-- ======= DASHBOARD ======= -->
+    <!-- DASHBOARD -->
     <div id="dashboardSection">
         <div class="card shadow-sm">
             <div class="card-body">
                 <h4 class="mb-3">خوش آمدید 👋</h4>
-                <p>
-                    این سیستم انبارداری برای استفاده شخصی طراحی شده و
-                    فعلاً بدون لاگین کار می‌کند.
-                </p>
-                <p class="text-muted mb-0">
-                    اطلاعات به‌صورت محلی در مرورگر ذخیره می‌شوند.
-                </p>
+                <p>این سیستم انبارداری برای استفاده شخصی طراحی شده و فعلاً بدون لاگین کار می‌کند.</p>
             </div>
         </div>
     </div>
 
-    <!-- ======= PEOPLE ======= -->
+    <!-- PEOPLE SECTION -->
     <div id="peopleSection" style="display:none;">
-
-        <!-- فرم ثبت شخص -->
         <div class="card shadow-sm mt-4">
             <div class="card-body">
                 <h5 class="mb-3">ثبت شخص</h5>
-
                 <form id="personForm">
                     <div class="row g-3">
-
                         <div class="col-md-3">
                             <label class="form-label">نوع شخص</label>
                             <select class="form-select" id="personType" required>
@@ -95,44 +62,34 @@
                                 <option value="حقوقی">حقوقی</option>
                             </select>
                         </div>
-
                         <div class="col-md-3">
                             <label class="form-label">نام</label>
                             <input type="text" class="form-control" id="firstName">
                         </div>
-
                         <div class="col-md-3">
                             <label class="form-label">نام خانوادگی</label>
                             <input type="text" class="form-control" id="lastName">
                         </div>
-
                         <div class="col-md-3">
                             <label class="form-label">نام شرکت</label>
                             <input type="text" class="form-control" id="companyName">
                         </div>
-
                         <div class="col-md-3">
                             <label class="form-label">شماره تماس</label>
                             <input type="text" class="form-control" id="phone">
                         </div>
-
                         <div class="col-md-3">
                             <label class="form-label">کد ملی / شناسه ملی</label>
                             <input type="text" class="form-control" id="nationalCode">
                         </div>
-
                     </div>
-
                     <button class="btn btn-primary mt-3">ثبت شخص</button>
                 </form>
             </div>
         </div>
-
-        <!-- جدول اشخاص -->
         <div class="card shadow-sm mt-4">
             <div class="card-body">
                 <h5 class="mb-3">لیست اشخاص</h5>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped align-middle">
                         <thead>
@@ -140,7 +97,7 @@
                                 <th>نوع</th>
                                 <th>نام / شرکت</th>
                                 <th>تماس</th>
-                                <th>کد ملی / شناسه ملی</th>
+                                <th>کد</th>
                             </tr>
                         </thead>
                         <tbody id="peopleTable"></tbody>
@@ -148,25 +105,67 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- CATEGORY SECTION -->
+    <div id="categorySection" style="display:none;">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">ثبت گروه کالا</h5>
+                <form id="categoryForm">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">نام گروه کالا</label>
+                            <input type="text" class="form-control" id="categoryName">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">توضیحات</label>
+                            <input type="text" class="form-control" id="categoryDesc">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3">ثبت گروه</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">لیست گروه کالا</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>نام گروه</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
 
-<!-- ======= SCRIPTS ======= -->
+<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/people.js"></script>
+<script src="js/category.js"></script>
 
 <script>
 function showSection(section) {
     document.getElementById("dashboardSection").style.display = "none";
     document.getElementById("peopleSection").style.display = "none";
+    document.getElementById("categorySection").style.display = "none";
 
     document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
 
     if (section === "people") {
         document.getElementById("peopleSection").style.display = "block";
         document.querySelectorAll(".nav-link")[1].classList.add("active");
+    } else if (section === "category") {
+        document.getElementById("categorySection").style.display = "block";
+        document.querySelectorAll(".nav-link")[2].classList.add("active");
     } else {
         document.getElementById("dashboardSection").style.display = "block";
         document.querySelectorAll(".nav-link")[0].classList.add("active");
@@ -176,53 +175,3 @@ function showSection(section) {
 
 </body>
 </html>
-<!-- ======= CATEGORY ======= -->
-<div id="categorySection" style="display:none;">
-
-    <!-- فرم ثبت گروه کالا -->
-    <div class="card shadow-sm mt-4">
-        <div class="card-body">
-            <h5 class="mb-3">ثبت گروه کالا</h5>
-
-            <form id="categoryForm">
-                <div class="row g-3">
-
-                    <div class="col-md-4">
-                        <label class="form-label">نام گروه کالا</label>
-                        <input type="text" class="form-control" id="categoryName">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">توضیحات</label>
-                        <input type="text" class="form-control" id="categoryDesc">
-                    </div>
-
-                </div>
-
-                <button class="btn btn-primary mt-3">ثبت گروه</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- جدول گروه‌ها -->
-    <div class="card shadow-sm mt-4">
-        <div class="card-body">
-            <h5 class="mb-3">لیست گروه کالا</h5>
-
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>نام گروه</th>
-                            <th>توضیحات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="categoryTable"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-
