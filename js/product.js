@@ -65,9 +65,10 @@ productForm.addEventListener("submit", (e) => {
     }
 
     productForm.reset();
-    productName.focus();
+    productName.focus(); // <-- اینجا اضافه شد
     renderProductTable();
 });
+
 
 // نمایش جدول کالاها
 function renderProductTable() {
