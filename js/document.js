@@ -23,6 +23,7 @@ let lastIssueNumber = 1000;
 
 // ====== پر کردن dropdown ها ======
 function populateDocDropdowns() {
+    // طرف حساب
     docPerson.innerHTML = '<option value="">انتخاب طرف حساب</option>';
     people.forEach(p => {
         const opt = document.createElement("option");
@@ -31,6 +32,7 @@ function populateDocDropdowns() {
         docPerson.appendChild(opt);
     });
 
+    // گروه کالا
     docCategory.innerHTML = '<option value="">انتخاب گروه</option>';
     categories.forEach(c => {
         const opt = document.createElement("option");
@@ -39,9 +41,18 @@ function populateDocDropdowns() {
         docCategory.appendChild(opt);
     });
 }
-populateDocDropdowns();
 
-// وقتی گروه کالا تغییر کرد، کالاها نمایش داده شود
+// فرم را آپدیت کن (وقتی تب باز شد)
+function refreshDocForm() {
+    populateDocDropdowns();
+    docProduct.innerHTML = '<option value="">انتخاب کالا</option>';
+    docUnit.value = "";
+    docStock.value = "";
+    docQty.value = "";
+    docDesc.value = "";
+}
+
+// پر کردن کالاها با توجه به گروه
 docCategory.addEventListener("change", () => {
     docProduct.innerHTML = '<option value="">انتخاب کالا</option>';
     const selectedCat = docCategory.value;
@@ -55,10 +66,10 @@ docCategory.addEventListener("change", () => {
     docStock.value = "";
 });
 
-// وقتی کالا انتخاب شد، واحد و موجودی نمایش داده شود
+// نمایش واحد و موجودی کالا هنگام انتخاب
 docProduct.addEventListener("change", () => {
     const prod = products.find(p => p.code === docProduct.value);
-    if(prod) {
+    if(prod){
         docUnit.value = prod.unit;
         const totalStock = prod.initialStock + prod.receipt - prod.issue;
         docStock.value = totalStock;
@@ -68,20 +79,16 @@ docProduct.addEventListener("change", () => {
     }
 });
 
-// شماره سند و ردیف سند اتومات
+// شماره سند و ردیف اتومات
 docType.addEventListener("change", () => {
-    if(docType.value === "رسید") {
-        docNumber.value = lastReceiptNumber + 1;
-    } else if(docType.value === "حواله") {
-        docNumber.value = lastIssueNumber + 1;
-    } else {
-        docNumber.value = "";
-    }
+    if(docType.value === "رسید") docNumber.value = lastReceiptNumber + 1;
+    else if(docType.value === "حواله") docNumber.value = lastIssueNumber + 1;
+    else docNumber.value = "";
     docRow.value = 1;
 });
 
 // ====== ثبت سند ======
-docForm.addEventListener("submit", (e) => {
+docForm.addEventListener("submit", e => {
     e.preventDefault();
     const type = docType.value;
     const number = parseInt(docNumber.value);
@@ -93,7 +100,7 @@ docForm.addEventListener("submit", (e) => {
     const qty = parseInt(docQty.value);
     const desc = docDesc.value.trim() || "-";
 
-    if(!type || !number || !date || !person || !category || !productCode || !qty) {
+    if(!type || !number || !date || !person || !category || !productCode || !qty){
         alert("لطفاً همه فیلدهای ضروری را پر کنید"); 
         return; 
     }
@@ -103,31 +110,28 @@ docForm.addEventListener("submit", (e) => {
 
     const totalStock = prod.initialStock + prod.receipt - prod.issue;
 
-    // چک موجودی برای حواله
-    if(type === "حواله" && qty > totalStock) {
+    if(type === "حواله" && qty > totalStock){
         alert("تعداد خروج نمی‌تواند بیشتر از موجودی باشد");
         return;
     }
 
     // ثبت یا ویرایش
-    if(editIndex === -1) {
+    if(editIndex === -1){
         documents.push({
             type, number, row, date, person, category,
             productCode, productName: prod.name, unit: prod.unit,
             stock: totalStock, qty, desc
         });
 
-        // بروزرسانی موجودی کالا
         if(type === "رسید") prod.receipt += qty;
         else if(type === "حواله") prod.issue += qty;
 
-        // بروزرسانی شماره سند
         if(type === "رسید") lastReceiptNumber = number;
-        else if(type === "حواله") lastIssueNumber = number;
+        else lastIssueNumber = number;
 
     } else {
         const doc = documents[editIndex];
-        // اگر تغییر نوع سند یا تعداد باشد، موجودی اصلاح شود
+
         if(doc.type === "رسید") prod.receipt -= doc.qty;
         else prod.issue -= doc.qty;
 
@@ -144,7 +148,6 @@ docForm.addEventListener("submit", (e) => {
         doc.qty = qty;
         doc.desc = desc;
 
-        // اعمال دوباره موجودی
         if(type === "رسید") prod.receipt += qty;
         else prod.issue += qty;
 
@@ -152,22 +155,22 @@ docForm.addEventListener("submit", (e) => {
         docForm.querySelector("button").textContent = "ثبت سند";
     }
 
-    docForm.reset();
+    refreshDocForm();
     docNumber.value = (type === "رسید" ? lastReceiptNumber + 1 : lastIssueNumber + 1);
     docRow.value = 1;
-    setTimeout(() => { docType.focus(); }, 0);
+    setTimeout(()=>{docType.focus();},0);
     renderDocumentTable();
 });
 
 // ====== نمایش جدول اسناد ======
-function renderDocumentTable() {
+function renderDocumentTable(){
     documentTable.innerHTML = "";
-    if(documents.length === 0) {
+    if(documents.length === 0){
         documentTable.innerHTML = `<tr><td colspan="12" class="text-center text-muted">موردی ثبت نشده است</td></tr>`;
         return;
     }
 
-    documents.forEach((d, index) => {
+    documents.forEach((d,index)=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${d.type}</td>
@@ -191,20 +194,20 @@ function renderDocumentTable() {
 }
 
 // ====== حذف سند ======
-function deleteDocument(index) {
+function deleteDocument(index){
     const doc = documents[index];
-    if(confirm(`آیا مطمئن هستید که سند ${doc.number} ردیف ${doc.row} حذف شود؟`)) {
+    if(confirm(`آیا مطمئن هستید که سند ${doc.number} ردیف ${doc.row} حذف شود؟`)){
         const prod = products.find(p => p.code === doc.productCode);
         if(doc.type === "رسید") prod.receipt -= doc.qty;
         else prod.issue -= doc.qty;
 
-        documents.splice(index, 1);
+        documents.splice(index,1);
         renderDocumentTable();
     }
 }
 
 // ====== ویرایش سند ======
-function editDocument(index) {
+function editDocument(index){
     const doc = documents[index];
     editIndex = index;
 
