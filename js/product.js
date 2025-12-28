@@ -65,7 +65,7 @@ productForm.addEventListener("submit", (e) => {
     }
 
     productForm.reset();
-    productName.focus(); // <-- اینجا اضافه شد
+    setTimeout(() => { productName.focus(); }, 0);
     renderProductTable();
 });
 
