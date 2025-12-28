@@ -17,7 +17,7 @@ categoryForm.addEventListener("submit", (e) => {
     if(!name) { alert("نام گروه کالا را وارد کنید"); return; }
 
     // تولید کد گروه 3 رقمی
-    const code = String(nextGroupCode).padStart(4, '0');
+    const code = String(nextGroupCode).padStart(3, '0');
     nextGroupCode++;
 
     categories.push({
