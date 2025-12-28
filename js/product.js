@@ -65,6 +65,7 @@ productForm.addEventListener("submit", (e) => {
     }
 
     productForm.reset();
+    productName.focus();
     renderProductTable();
 });
 
