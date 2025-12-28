@@ -11,25 +11,30 @@ const productTable = document.getElementById("productTable");
 let products = [];
 
 // شماره سریال گروه‌ها
-let groupCounters = {};
+let groupCounters = {};  // مثال: { '01': 3, '02': 5 } 
 
-// کمک برای تولید مخفف انگلیسی از نام گروه
-function getGroupCode(groupName) {
-    const words = groupName.split(/\s+/); // جدا کردن با فاصله
-    let code = "";
-    words.forEach(w => {
-        if(w.length > 0) code += w[0].toUpperCase();
+// جدول شماره گروه‌ها بر اساس گروه ثبت شده
+let groupCodes = {};  // مثال: { 'نوشیدنی': '01', 'مواد غذایی': '02' }
+
+// پر کردن groupCodes از جدول گروه‌ها
+function populateGroupCodes() {
+    let code = 1;
+    categories.forEach(c => {
+        if(!groupCodes[c.name]) {
+            groupCodes[c.name] = String(code).padStart(2,'0');
+            code++;
+        }
     });
-    return code;
 }
 
-// تولید کد کالا خودکار
-function generateProductCode(groupName) {
-    const prefix = getGroupCode(groupName) + "1376/";
-    if(!groupCounters[groupName]) groupCounters[groupName] = 1;
-    const serial = String(groupCounters[groupName]).padStart(3, '0');
-    groupCounters[groupName]++;
-    return prefix + serial;
+// تولید کد کالا
+function generateProductCode(categoryName) {
+    const groupCode = groupCodes[categoryName];
+    if(!groupCounters[groupCode]) groupCounters[groupCode] = 1;
+
+    const serial = String(groupCounters[groupCode]).padStart(6,'0');
+    groupCounters[groupCode]++;
+    return `${groupCode}/${serial}`;
 }
 
 // نمایش جدول
@@ -75,6 +80,9 @@ productForm.addEventListener("submit", (e) => {
     if(!name) { alert("نام کالا را وارد کنید"); return; }
     if(!category) { alert("گروه کالا را انتخاب کنید"); return; }
     if(!unit) { alert("واحد شمارش را انتخاب کنید"); return; }
+
+    // پر کردن groupCodes در صورت اضافه شدن گروه جدید
+    populateGroupCodes();
 
     if(editIndex === -1) {
         // ثبت جدید
@@ -125,7 +133,7 @@ function editProduct(index) {
     productForm.querySelector("button").textContent = "ذخیره ویرایش";
 }
 
-// پر کردن dropdown گروه کالا و واحد شمارش
+// پر کردن dropdown گروه و واحد
 function populateProductDropdowns() {
     const categorySelect = productCategory;
     const unitSelect = productUnit;
@@ -153,5 +161,5 @@ categoryForm.addEventListener("submit", () => { setTimeout(populateProductDropdo
 unitForm.addEventListener("submit", () => { setTimeout(populateProductDropdowns, 100); });
 
 // نمایش اولیه جدول
-renderProductTable();
 populateProductDropdowns();
+renderProductTable();
