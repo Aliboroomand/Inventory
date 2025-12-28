@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <title>سیستم انبارداری</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    
     <!-- Bootstrap RTL -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-
     <!-- فونت فارسی -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 
@@ -42,7 +41,7 @@
 <!-- ======= CONTENT ======= -->
 <div class="container mt-4">
 
-    <!-- ======= DASHBOARD ======= -->
+    <!-- DASHBOARD -->
     <div id="dashboardSection">
         <div class="card shadow-sm">
             <div class="card-body">
@@ -53,27 +52,188 @@
         </div>
     </div>
 
-    <!-- ======= PEOPLE ======= -->
-    <div id="peopleSection" style="display:none;"></div>
+    <!-- PEOPLE -->
+    <div id="peopleSection" style="display:none;">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">ثبت شخص</h5>
+                <form id="personForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">نوع شخص</label>
+                            <select class="form-select" id="personType" required>
+                                <option value="">انتخاب کنید</option>
+                                <option value="حقیقی">حقیقی</option>
+                                <option value="حقوقی">حقوقی</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">نام</label>
+                            <input type="text" class="form-control" id="firstName">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">نام خانوادگی</label>
+                            <input type="text" class="form-control" id="lastName">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">نام شرکت</label>
+                            <input type="text" class="form-control" id="companyName">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">شماره تماس</label>
+                            <input type="text" class="form-control" id="phone">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">کد ملی / شناسه ملی</label>
+                            <input type="text" class="form-control" id="nationalCode">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3">ثبت شخص</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">لیست اشخاص</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>نوع</th>
+                                <th>نام / شرکت</th>
+                                <th>تماس</th>
+                                <th>کد</th>
+                            </tr>
+                        </thead>
+                        <tbody id="peopleTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- ======= CATEGORY ======= -->
-    <div id="categorySection" style="display:none;"></div>
+    <!-- CATEGORY -->
+    <div id="categorySection" style="display:none;">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">ثبت گروه کالا</h5>
+                <form id="categoryForm">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">نام گروه کالا</label>
+                            <input type="text" class="form-control" id="categoryName">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">توضیحات</label>
+                            <input type="text" class="form-control" id="categoryDesc">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3">ثبت گروه</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">لیست گروه‌ها</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>کد گروه</th>
+                                <th>نام گروه</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- ======= UNIT ======= -->
-    <div id="unitSection" style="display:none;"></div>
+    <!-- UNIT -->
+    <div id="unitSection" style="display:none;">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">ثبت واحد شمارش</h5>
+                <form id="unitForm">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">نام واحد شمارش</label>
+                            <input type="text" class="form-control" id="unitName">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3">ثبت واحد</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">لیست واحدها</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>نام واحد</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unitTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- ======= PRODUCT ======= -->
-    <div id="productSection" style="display:none;"></div>
+    <!-- PRODUCT -->
+    <div id="productSection" style="display:none;">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">ثبت کالا</h5>
+                <form id="productForm">
+                    <div class="row g-3">
+                        <div class="col-md-2"><label class="form-label">کد کالا</label><input type="text" class="form-control" id="productCode" readonly></div>
+                        <div class="col-md-3"><label class="form-label">نام کالا</label><input type="text" class="form-control" id="productName"></div>
+                        <div class="col-md-2"><label class="form-label">گروه کالا</label><select class="form-select" id="productCategory"></select></div>
+                        <div class="col-md-2"><label class="form-label">واحد شمارش</label><select class="form-select" id="productUnit"></select></div>
+                        <div class="col-md-2"><label class="form-label">موجودی اول دوره</label><input type="number" class="form-control" id="productInitialStock"></div>
+                        <div class="col-md-3"><label class="form-label">توضیحات</label><input type="text" class="form-control" id="productDesc"></div>
+                    </div>
+                    <button class="btn btn-primary mt-3">ثبت کالا</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">لیست کالاها</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>کد کالا</th>
+                                <th>نام کالا</th>
+                                <th>گروه</th>
+                                <th>واحد</th>
+                                <th>موجودی اول دوره</th>
+                                <th>رسید</th>
+                                <th>حواله</th>
+                                <th>موجودی</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- ======= DOCUMENT (RECEIPT / ISSUE) ======= -->
+    <!-- DOCUMENT -->
     <div id="documentSection" style="display:none;"></div>
 
 </div>
 
 <!-- ======= SCRIPTS ======= -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- فایل‌های جداگانه JS -->
 <script src="js/people.js"></script>
 <script src="js/unit.js"></script>
 <script src="js/category.js"></script>
