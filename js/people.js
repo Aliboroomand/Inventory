@@ -55,6 +55,29 @@ function renderPeople() {
         tbody.appendChild(tr);
     });
 }
+const personTypeSelect = document.getElementById("personType");
+
+const firstNameInput = document.getElementById("firstName");
+const lastNameInput = document.getElementById("lastName");
+const companyInput = document.getElementById("companyName");
+
+personTypeSelect.addEventListener("change", function () {
+    if (this.value === "حقیقی") {
+        firstNameInput.disabled = false;
+        lastNameInput.disabled = false;
+        companyInput.disabled = true;
+        companyInput.value = "";
+    }
+
+    if (this.value === "حقوقی") {
+        firstNameInput.disabled = true;
+        lastNameInput.disabled = true;
+        companyInput.disabled = false;
+        firstNameInput.value = "";
+        lastNameInput.value = "";
+    }
+});
+
 
 renderPeople();
 
