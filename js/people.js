@@ -71,6 +71,10 @@ form.addEventListener("submit", (e) => {
     setTimeout(() => { companyName.focus(); }, 0);
     
     renderTable();
+    if (typeof populateDocDropdowns === "function") {
+    populateDocDropdowns();
+}
+
 });
 
 // ======== نمایش جدول ========
