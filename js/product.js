@@ -63,6 +63,9 @@ productForm.addEventListener("submit", (e) => {
         editIndex = -1;
         productForm.querySelector("button").textContent = "ثبت کالا";
     }
+        if (typeof populateDocDropdowns === "function") {
+            populateDocDropdowns();
+        }
 
     productForm.reset();
     setTimeout(() => { productName.focus(); }, 0);
