@@ -21,37 +21,36 @@ let lastIssueNumber = 1000;
 
 // ====== پر کردن dropdown ها ======
 function populateDocDropdowns() {
-    // طرف حساب‌ها
+
+    // ===== طرف حساب =====
     docPerson.innerHTML = '<option value="">انتخاب طرف حساب</option>';
+
     people.forEach(p => {
+        let name = "";
+
+        if (p.type === "حقیقی") {
+            name = `${p.firstName} ${p.lastName}`;
+        } else {
+            name = p.companyName;
+        }
+
         const opt = document.createElement("option");
-        opt.value = p.name;
-        opt.textContent = p.name;
+        opt.value = name;
+        opt.textContent = name;
         docPerson.appendChild(opt);
     });
 
-    // گروه کالاها
-    docCategory.innerHTML = '<option value="">انتخاب گروه</option>';
-    categories.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c.name;
-        opt.textContent = c.name;
-        docCategory.appendChild(opt);
-    });
-}
-populateDocDropdowns();
-
-// وقتی گروه کالا تغییر کرد، کالاها نمایش داده شود
-docCategory.addEventListener("change", () => {
+    // ===== کالا =====
     docProduct.innerHTML = '<option value="">انتخاب کالا</option>';
-    const selectedCat = docCategory.value;
-    products.filter(p => p.category === selectedCat).forEach(p => {
+
+    products.forEach(p => {
         const opt = document.createElement("option");
         opt.value = p.code;
         opt.textContent = p.name;
         docProduct.appendChild(opt);
     });
-});
+}
+
 
 // شماره سند و ردیف سند اتومات
 docType.addEventListener("change", () => {
