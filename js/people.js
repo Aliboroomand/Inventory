@@ -61,6 +61,9 @@ form.addEventListener("submit", (e) => {
         phone: phone.value.trim() || "-",
         code: nationalCode.value.trim() || "-"
     });
+    if (typeof populateDocDropdowns === "function") {
+        populateDocDropdowns();
+    }    
 
     form.reset();
     firstName.disabled = false;
@@ -71,9 +74,7 @@ form.addEventListener("submit", (e) => {
     setTimeout(() => { companyName.focus(); }, 0);
     
     renderTable();
-    if (typeof populateDocDropdowns === "function") {
-    populateDocDropdowns();
-}
+
 
 });
 
