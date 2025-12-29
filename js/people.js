@@ -1,3 +1,4 @@
+// people.js
 // عناصر فرم
 const form = document.getElementById("personForm");
 const typeSelect = document.getElementById("personType");
@@ -8,7 +9,7 @@ const phone = document.getElementById("phone");
 const nationalCode = document.getElementById("nationalCode");
 const tableBody = document.getElementById("peopleTable");
 
-// آرایه موقت برای نمایش جدول
+// آرایه کل افراد
 let people = [];
 
 // ======== فیلدها هوشمند ========
@@ -54,13 +55,19 @@ form.addEventListener("submit", (e) => {
         displayName = companyName.value.trim();
     }
 
-    // داده فقط در آرایه موقت
+    // بررسی تکراری بودن شخص
+    const exists = people.some(p => p.name === displayName);
+    if (exists) { alert("این شخص قبلاً ثبت شده است"); return; }
+
+    // داده فقط در آرایه کل
     people.push({
         type: type,
         name: displayName,
         phone: phone.value.trim() || "-",
         code: nationalCode.value.trim() || "-"
     });
+
+    // بروزرسانی dropdown رسید/حواله در document.js
     if (typeof populateDocDropdowns === "function") {
         populateDocDropdowns();
     }    
@@ -71,11 +78,9 @@ form.addEventListener("submit", (e) => {
     companyName.disabled = false;
     typeSelect.value = "";
 
-    setTimeout(() => { companyName.focus(); }, 0);
+    setTimeout(() => { firstName.focus(); }, 0);
     
     renderTable();
-
-
 });
 
 // ======== نمایش جدول ========
