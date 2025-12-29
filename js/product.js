@@ -70,15 +70,18 @@ productForm.addEventListener("submit", (e) => {
 });
 
 
-// نمایش جدول کالاها
 function renderProductTable() {
-    productTable.innerHTML = "";
+    const tableBody = document.getElementById("productTable");
+    tableBody.innerHTML = "";
+
     if(products.length === 0) {
-        productTable.innerHTML = `<tr><td colspan="10" class="text-center text-muted">موردی ثبت نشده است</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="10" class="text-center text-muted">موردی ثبت نشده است</td></tr>`;
         return;
     }
 
     products.forEach((p, index) => {
+        const totalStock = p.initialStock + p.receipt - p.issue;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${p.code}</td>
@@ -88,16 +91,17 @@ function renderProductTable() {
             <td>${p.initialStock}</td>
             <td>${p.receipt}</td>
             <td>${p.issue}</td>
-            <td>${p.initialStock + p.receipt - p.issue}</td>
+            <td>${totalStock}</td>
             <td>${p.desc}</td>
             <td>
                 <button class="btn btn-sm btn-warning me-1" onclick="editProduct(${index})">ویرایش</button>
                 <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">حذف</button>
             </td>
         `;
-        productTable.appendChild(tr);
+        tableBody.appendChild(tr);
     });
 }
+
 
 // حذف کالا
 function deleteProduct(index) {
