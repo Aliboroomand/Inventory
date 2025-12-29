@@ -1,27 +1,28 @@
-// ================= ELEMENTS =================
-const docForm   = document.getElementById("documentForm");
-const docType   = document.getElementById("docType");
+// document.js
+// عناصر فرم
+const docForm = document.getElementById("documentForm");
+const docType = document.getElementById("docType");
 const docNumber = document.getElementById("docNumber");
-const docRow    = document.getElementById("docRow");
-const docDate   = document.getElementById("docDate");
+const docRow = document.getElementById("docRow");
+const docDate = document.getElementById("docDate");
 const docPerson = document.getElementById("docPerson");
-const docProduct= document.getElementById("docProduct");
-const docQty    = document.getElementById("docQty");
-const docDesc   = document.getElementById("docDesc");
-const docTable  = document.getElementById("documentTable");
+const docCategory = document.getElementById("docCategory"); // برای انتخاب گروه کالای سند
+const docProduct = document.getElementById("docProduct");
+const docQty = document.getElementById("docQty");
+const docDesc = document.getElementById("docDesc");
+const docTable = document.getElementById("documentTable");
 
-// ================= DATA =================
 let documents = [];
-let docEditIndex = -1;
+let editIndex = -1;
 
+// شماره سند جدا برای رسید و حواله
 let lastReceiptNumber = 1000;
-let lastIssueNumber   = 1000;
+let lastIssueNumber = 1000;
 
-// ================= DROPDOWNS =================
+// ====== پر کردن dropdown ها ======
 function populateDocDropdowns() {
-
-    // --- People ---
-    docPerson.innerHTML = `<option value="">انتخاب طرف حساب</option>`;
+    // طرف حساب
+    docPerson.innerHTML = '<option value="">انتخاب طرف حساب</option>';
     people.forEach(p => {
         const opt = document.createElement("option");
         opt.value = p.name;
@@ -29,24 +30,21 @@ function populateDocDropdowns() {
         docPerson.appendChild(opt);
     });
 
-    // --- Products ---
-    docProduct.innerHTML = `<option value="">انتخاب کالا</option>`;
+    // کالا
+    docProduct.innerHTML = '<option value="">انتخاب کالا</option>';
     products.forEach(p => {
         const opt = document.createElement("option");
         opt.value = p.code;
-        opt.textContent = `${p.name} (${p.code})`;
+        opt.textContent = p.name;
         docProduct.appendChild(opt);
     });
 }
 
-// اجرای اولیه
-populateDocDropdowns();
-
-// ================= DOC TYPE =================
+// شماره سند و ردیف سند اتومات
 docType.addEventListener("change", () => {
-    if (docType.value === "رسید") {
+    if(docType.value === "رسید") {
         docNumber.value = lastReceiptNumber + 1;
-    } else if (docType.value === "حواله") {
+    } else if(docType.value === "حواله") {
         docNumber.value = lastIssueNumber + 1;
     } else {
         docNumber.value = "";
@@ -54,107 +52,96 @@ docType.addEventListener("change", () => {
     docRow.value = 1;
 });
 
-// ================= SUBMIT =================
+// ====== ثبت سند ======
 docForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    const type   = docType.value;
+    const type = docType.value;
     const number = parseInt(docNumber.value);
-    const date   = docDate.value.trim();
+    const row = editIndex === -1 ? (documents.filter(d => d.number === number).length + 1) : parseInt(docRow.value);
+    const date = docDate.value.trim();
     const person = docPerson.value;
     const productCode = docProduct.value;
-    const qty    = parseInt(docQty.value);
-    const desc   = docDesc.value.trim() || "-";
+    const qty = parseInt(docQty.value);
+    const desc = docDesc.value.trim() || "-";
 
-    if (!type || !number || !date || !person || !productCode || !qty) {
-        alert("همه فیلدهای ضروری را پر کنید");
+    if(!type || !number || !date || !person || !productCode || !qty) {
+        alert("لطفاً همه فیلدهای ضروری را پر کنید"); 
+        return; 
+    }
+
+    const prod = products.find(p => p.code === productCode);
+    if(!prod) { alert("کالای انتخاب شده یافت نشد"); return; }
+
+    const totalStock = prod.initialStock + prod.receipt - prod.issue;
+
+    // چک موجودی برای حواله
+    if(type === "حواله" && qty > totalStock) {
+        alert("تعداد خروج نمی‌تواند بیشتر از موجودی باشد");
         return;
     }
 
-    const product = products.find(p => p.code === productCode);
-    if (!product) return;
-
-    const currentStock = product.initialStock + product.receipt - product.issue;
-
-    if (type === "حواله" && qty > currentStock) {
-        alert("موجودی کالا کافی نیست");
-        return;
-    }
-
-    const row =
-        docEditIndex === -1
-        ? documents.filter(d => d.number === number).length + 1
-        : documents[docEditIndex].row;
-
-    // ---------- NEW ----------
-    if (docEditIndex === -1) {
-
+    // ثبت یا ویرایش
+    if(editIndex === -1) {
         documents.push({
-            type,
-            number,
-            row,
-            date,
-            person,
-            productCode,
-            productName: product.name,
-            unit: product.unit,
-            qty,
-            desc
+            type, number, row, date, person,
+            productCode, productName: prod.name, unit: prod.unit,
+            qty, desc
         });
 
-        if (type === "رسید") product.receipt += qty;
-        else product.issue += qty;
+        // بروزرسانی جدول کالا
+        if(type === "رسید") prod.receipt += qty;
+        else if(type === "حواله") prod.issue += qty;
 
-        if (type === "رسید") lastReceiptNumber = number;
+        // بروزرسانی شماره سند
+        if(type === "رسید") lastReceiptNumber = number;
         else lastIssueNumber = number;
 
-    }
-    // ---------- EDIT ----------
-    else {
-        const old = documents[docEditIndex];
+    } else {
+        const doc = documents[editIndex];
+        // کاهش تعداد قبلی از جدول کالا
+        if(doc.type === "رسید") prod.receipt -= doc.qty;
+        else prod.issue -= doc.qty;
 
-        if (old.type === "رسید") product.receipt -= old.qty;
-        else product.issue -= old.qty;
+        doc.type = type;
+        doc.number = number;
+        doc.row = row;
+        doc.date = date;
+        doc.person = person;
+        doc.productCode = productCode;
+        doc.productName = prod.name;
+        doc.unit = prod.unit;
+        doc.qty = qty;
+        doc.desc = desc;
 
-        old.type = type;
-        old.number = number;
-        old.date = date;
-        old.person = person;
-        old.productCode = product.code;
-        old.productName = product.name;
-        old.unit = product.unit;
-        old.qty = qty;
-        old.desc = desc;
+        // اعمال دوباره در جدول کالا
+        if(type === "رسید") prod.receipt += qty;
+        else prod.issue += qty;
 
-        if (type === "رسید") product.receipt += qty;
-        else product.issue += qty;
-
-        docEditIndex = -1;
+        editIndex = -1;
         docForm.querySelector("button").textContent = "ثبت سند";
     }
 
     docForm.reset();
+    docNumber.value = (type === "رسید" ? lastReceiptNumber + 1 : lastIssueNumber + 1);
     docRow.value = 1;
-    populateDocDropdowns();
+    setTimeout(() => { docType.focus(); }, 0);
+
     renderDocumentTable();
-    renderProductTable();
+    renderProductTable(); // جدول کالا را آپدیت می‌کنیم
 });
 
-// ================= TABLE =================
+// ====== نمایش جدول اسناد ======
 function renderDocumentTable() {
     docTable.innerHTML = "";
-
-    if (documents.length === 0) {
-        docTable.innerHTML = `
-        <tr>
-            <td colspan="12" class="text-center text-muted">
-                موردی ثبت نشده است
-            </td>
-        </tr>`;
+    if(documents.length === 0) {
+        docTable.innerHTML = `<tr><td colspan="12" class="text-center text-muted">موردی ثبت نشده است</td></tr>`;
         return;
     }
 
-    documents.forEach((d, i) => {
+    documents.forEach((d, index) => {
+        const prod = products.find(p => p.code === d.productCode);
+        const totalStock = prod ? prod.initialStock + prod.receipt - prod.issue : 0;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${d.type}</td>
@@ -163,50 +150,51 @@ function renderDocumentTable() {
             <td>${d.date}</td>
             <td>${d.person}</td>
             <td>${d.productName}</td>
-            <td>-</td>
+            <td>${prod ? prod.category : ""}</td>
             <td>${d.unit}</td>
             <td>${d.qty}</td>
+            <td>${totalStock}</td>
             <td>${d.desc}</td>
             <td>
-                <button class="btn btn-sm btn-warning me-1"
-                    onclick="editDocument(${i})">ویرایش</button>
-                <button class="btn btn-sm btn-danger"
-                    onclick="deleteDocument(${i})">حذف</button>
+                <button class="btn btn-sm btn-warning me-1" onclick="editDocument(${index})">ویرایش</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDocument(${index})">حذف</button>
             </td>
         `;
         docTable.appendChild(tr);
     });
 }
 
-// ================= DELETE =================
+// ====== حذف سند ======
 function deleteDocument(index) {
-    const d = documents[index];
-    const p = products.find(x => x.code === d.productCode);
+    const doc = documents[index];
+    if(confirm(`آیا مطمئن هستید که سند ${doc.number} ردیف ${doc.row} حذف شود؟`)) {
+        const prod = products.find(p => p.code === doc.productCode);
+        if(doc.type === "رسید") prod.receipt -= doc.qty;
+        else prod.issue -= doc.qty;
 
-    if (!confirm(`حذف سند ${d.number} - ردیف ${d.row} ؟`)) return;
-
-    if (d.type === "رسید") p.receipt -= d.qty;
-    else p.issue -= d.qty;
-
-    documents.splice(index, 1);
-
-    renderDocumentTable();
-    renderProductTable();
+        documents.splice(index, 1);
+        renderDocumentTable();
+        renderProductTable();
+    }
 }
 
-// ================= EDIT =================
+// ====== ویرایش سند ======
 function editDocument(index) {
-    const d = documents[index];
-    docEditIndex = index;
+    const doc = documents[index];
+    editIndex = index;
 
-    docType.value = d.type;
-    docNumber.value = d.number;
-    docRow.value = d.row;
-    docDate.value = d.date;
-    docPerson.value = d.person;
-    docProduct.value = d.productCode;
-    docQty.value = d.qty;
-    docDesc.value = d.desc;
+    docType.value = doc.type;
+    docNumber.value = doc.number;
+    docRow.value = doc.row;
+    docDate.value = doc.date;
+    docPerson.value = doc.person;
 
+    docProduct.value = doc.productCode;
+
+    docQty.value = doc.qty;
+    docDesc.value = doc.desc;
     docForm.querySelector("button").textContent = "ذخیره ویرایش";
 }
+
+// نمایش اولیه dropdown ها
+populateDocDropdowns();
