@@ -40,17 +40,20 @@ function populateDocDropdowns() {
     });
 }
 
-// شماره سند و ردیف سند اتومات
+// شماره سند اتومات
 docType.addEventListener("change", () => {
     if(docType.value === "رسید") {
+        if(!lastReceiptNumber) lastReceiptNumber = 1000;
         docNumber.value = lastReceiptNumber + 1;
     } else if(docType.value === "حواله") {
+        if(!lastIssueNumber) lastIssueNumber = 1000;
         docNumber.value = lastIssueNumber + 1;
     } else {
         docNumber.value = "";
     }
     docRow.value = 1;
 });
+
 
 // ====== ثبت سند ======
 docForm.addEventListener("submit", (e) => {
@@ -81,21 +84,21 @@ docForm.addEventListener("submit", (e) => {
     }
 
     // ثبت یا ویرایش
-    if(editIndex === -1) {
-        documents.push({
-            type, number, row, date, person,
-            productCode, productName: prod.name, unit: prod.unit,
-            qty, desc
-        });
-
-        // بروزرسانی جدول کالا
-        if(type === "رسید") prod.receipt += qty;
-        else if(type === "حواله") prod.issue += qty;
-
-        // بروزرسانی شماره سند
-        if(type === "رسید") lastReceiptNumber = number;
-        else lastIssueNumber = number;
-
+        if(editIndex === -1) {
+            documents.push({
+                type, number, row, date, person,
+                productCode, productName: prod.name, unit: prod.unit,
+                qty, desc
+            });
+        
+            if(type === "رسید") {
+                prod.receipt += qty;
+                lastReceiptNumber = number;
+            } else if(type === "حواله") {
+                prod.issue += qty;
+                lastIssueNumber = number;
+            }
+        }
     } else {
         const doc = documents[editIndex];
         // کاهش تعداد قبلی از جدول کالا
