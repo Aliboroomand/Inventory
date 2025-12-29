@@ -1,3 +1,4 @@
+// product.js
 // عناصر فرم
 const productForm = document.getElementById("productForm");
 const productName = document.getElementById("productName");
@@ -42,6 +43,10 @@ productForm.addEventListener("submit", (e) => {
         return; 
     }
 
+    // جلوگیری از ثبت کالای تکراری
+    const exists = products.some(p => p.name === name && editIndex === -1);
+    if(exists) { alert("این کالا قبلاً ثبت شده است"); return; }
+
     if(editIndex === -1) {
         const code = generateProductCode(category);
         products.push({
@@ -63,22 +68,22 @@ productForm.addEventListener("submit", (e) => {
         editIndex = -1;
         productForm.querySelector("button").textContent = "ثبت کالا";
     }
-        if (typeof populateDocDropdowns === "function") {
-            populateDocDropdowns();
-        }
+
+    // بروزرسانی dropdown رسید/حواله
+    if (typeof populateDocDropdowns === "function") {
+        populateDocDropdowns();
+    }
 
     productForm.reset();
     setTimeout(() => { productName.focus(); }, 0);
     renderProductTable();
 });
 
-
 function renderProductTable() {
-    const tableBody = document.getElementById("productTable");
-    tableBody.innerHTML = "";
+    productTable.innerHTML = "";
 
     if(products.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="10" class="text-center text-muted">موردی ثبت نشده است</td></tr>`;
+        productTable.innerHTML = `<tr><td colspan="10" class="text-center text-muted">موردی ثبت نشده است</td></tr>`;
         return;
     }
 
@@ -101,10 +106,9 @@ function renderProductTable() {
                 <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">حذف</button>
             </td>
         `;
-        tableBody.appendChild(tr);
+        productTable.appendChild(tr);
     });
 }
-
 
 // حذف کالا
 function deleteProduct(index) {
@@ -112,6 +116,9 @@ function deleteProduct(index) {
     if(confirm(`آیا مطمئن هستید که کالا (${p.name}) حذف شود؟`)) {
         products.splice(index, 1);
         renderProductTable();
+        if (typeof populateDocDropdowns === "function") {
+            populateDocDropdowns();
+        }
     }
 }
 
